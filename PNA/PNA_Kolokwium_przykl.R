@@ -69,7 +69,40 @@ plot(p, lnL, type="l")
 
 #a)
 
+ozemy maksymizowac tylko po jednemu paranetru, wtedy
 
+lnL_2 = function(parametry){
+  mu=parametry[1]
+  sigma2 = parametry[2]
+  ll = -N/2*log(2*pi)-N*log(sqrt(sigma2))-N/2*log(sigma2)-1/(2*sigma2)*sum((x-mu)^2)
+  return(ll)
+}
+
+#Gradient i hessian?
+
+gradient = function(parametry){
+  mu=parametry[1]
+  sigma2 = parametry[2]
+  gr = rep(0,2)
+  gr[1] = 1/sigma2*sum(x-mu)
+  gr[2] = -N/2*1/sigma2+1/(2*sigma2^2)*sum((x-mu)^2)
+  return(gr)
+}
+
+hesjan = function(parametry){
+  mu=parametry[1]
+  sigma2 = parametry[2]
+  h = matrix(0,nrow=2,ncol=2)
+  h[1,1] = -N/sigma2
+  h[1,2] = -1/(sigma2^2)*sum(x-mu)
+  h[2,2] = N/(2*sigma2^2)+1/(sigma2^3)*sum((x-mu)^2)
+  h[2,1] = h[1,2] # z symetrycznosci
+}
+
+
+library("maxLik")
+wynik = maxNR(fn=lnL_2,grad = gradient, hess = hesjan, start= c(mu=2,sigma2=3))
+summary(wynik)
 
 
 
